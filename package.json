@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/sreeveena/onlineStore#readme",
   "dependencies": {
+    "cli": "^1.0.1",
+    "cli-table": "^0.3.1",
     "inquirer": "^7.0.0",
     "mysql": "^2.17.1"
   },
