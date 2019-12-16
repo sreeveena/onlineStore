@@ -3,19 +3,8 @@ var Table = require('cli-table');
 var mysql = require("mysql");
 
 var table = new Table({
-    chars: {
-        'top': '─', 'top-mid': '┬', 'top-left': '┌', 'top-right': '┐'
-      , 'bottom': '─', 'bottom-mid': '┴', 'bottom-left': '└', 'bottom-right': '┘'
-      , 'left': '│', 'left-mid': '├'
-      , 'mid': '─', 'mid-mid': '┼'
-      , 'right': '│', 'right-mid': '┤'
-      , 'middle': '│'
-    },
     head: ['ID', 'product_name','department_name', 'price', 'stock_quantity'],
     colWidths: [6, 40, 15, 15, 30],
-    // style : {'padding-left': 1,
-    // 'padding-right': 1,
-  
     border: ['black']
 });
 var connection = mysql.createConnection({
@@ -37,9 +26,7 @@ connection.connect(function(err) {
 function displayItems(cb){
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
-        console.log(res);
             cb(res);
-        // connection.end();
         promptCustomer();
       });
 }
@@ -49,29 +36,32 @@ function promptCustomer(){
     .prompt([{
       name: "product",
       type: "input",
-      message: "What is the ID of the item you would like to purchase?"
+      message: "What is the ID of the item you would like to purchase (Quit with Q)?"
     },
     {
         name: "quantity",
         type: "input",
-        message: "How many would you like?"   
+        message: "How many would you like (Quit with Q)?"   
     }]).then (function(id){
-        var query = "SELECT id, stock_quantity FROM products WHERE id ="+ id.product;
-        connection.query(query, function(err, res) {
-            if (err) throw err;
-            if(id.quantity > res[0].stock_quantity){
-                console.log("insufficient quantity");
-                displayItems(function(returnValue){
-                    displayTable(returnValue);
-                });
+            if(id.quantity.toUpperCase() == "Q" || id.product.toUpperCase() == "Q"){
+                connection.end();
             }else{
-                res[0].stock_quantity -= id.quantity;
-                console.log(res[0].stock_quantity);
-                var id1 = parseInt(id.product);
-                updateProduct(res[0].stock_quantity,id1);
-                
-            }
-        });
+                var query = "SELECT id, stock_quantity FROM products WHERE id ="+ id.product;
+                connection.query(query, function(err, res) {
+            if (err) throw err;
+                if(id.quantity > res[0].stock_quantity){
+                    console.log("insufficient quantity");
+                    displayItems(function(returnValue){
+                        displayTable(returnValue);
+                    });
+                }else{
+                    res[0].stock_quantity -= id.quantity;
+                    var id1 = parseInt(id.product);
+                    updateProduct(res[0].stock_quantity,id1);
+                    
+                }
+            });
+        }   
     });
 }
 function updateProduct(q,id) {
@@ -86,7 +76,7 @@ function updateProduct(q,id) {
         }
       ],
       function(err, res) {
-        console.log(err);
+       if(err) throw err;
         displayItems(function(returnValue){
             displayTable(returnValue);
         });

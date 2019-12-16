@@ -3,19 +3,8 @@ var Table = require('cli-table');
 var mysql = require("mysql");
 
 var table = new Table({
-    chars: {
-        'top': '─', 'top-mid': '┬', 'top-left': '┌', 'top-right': '┐'
-      , 'bottom': '─', 'bottom-mid': '┴', 'bottom-left': '└', 'bottom-right': '┘'
-      , 'left': '│', 'left-mid': '├'
-      , 'mid': '─', 'mid-mid': '┼'
-      , 'right': '│', 'right-mid': '┤'
-      , 'middle': '│'
-    },
     head: ['ID', 'product_name','department_name', 'price', 'stock_quantity'],
     colWidths: [6, 40, 25, 15, 20],
-    // style : {'padding-left': 1,
-    // 'padding-right': 1,
-  
     border: ['black']
 });
 // var table = new Table();
@@ -37,7 +26,7 @@ function promptCustomer(){
     .prompt([{
       type: "rawlist",
       message: "What would you like to do?",
-      choices: ["View Products for Sale","View Low Inventory","Add to Inventory","Add New Product"],
+      choices: ["View Products for Sale","View Low Inventory","Add to Inventory","Add New Product","Quit"],
       name: "managerChoice"
     }]).then (function(info){
         // console.log(info);
@@ -47,10 +36,11 @@ function promptCustomer(){
             lowInventory();
         }else if(info.managerChoice == "Add to Inventory"){
             promptInventory();
-        // }else{
-        //     addNewInventory();
+        }else if(info.managerChoice == "Add New Product"){
+            addNewProduct();
+        }else{
+            connection.end();
         }
-        
         
     });
 }
@@ -102,10 +92,13 @@ function addInventory(id, quan){
         if (err) throw err;
 
          console.log("updated the quantity");
-        // table.push(res);
-        // console.log(table.toString());
     });
 }
+
+function addNewProduct(){
+
+}
+
 function displayTable(res){
     for( var i = 0; i < res.length; i++){
         table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
