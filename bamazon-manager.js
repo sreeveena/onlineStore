@@ -7,7 +7,7 @@ var table = new Table({
     colWidths: [6, 40, 25, 15, 20],
     border: ['black']
 });
-// var table = new Table();
+
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -18,10 +18,10 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
-    promptCustomer();
+    promptManager();
   });
 
-function promptCustomer(){
+function promptManager(){
     inquirer
     .prompt([{
       type: "rawlist",
@@ -29,7 +29,6 @@ function promptCustomer(){
       choices: ["View Products for Sale","View Low Inventory","Add to Inventory","Add New Product","Quit"],
       name: "managerChoice"
     }]).then (function(info){
-        // console.log(info);
         if(info.managerChoice == "View Products for Sale"){
             viewProducts();
         }else if(info.managerChoice == "View Low Inventory"){
@@ -37,7 +36,7 @@ function promptCustomer(){
         }else if(info.managerChoice == "Add to Inventory"){
             promptInventory();
         }else if(info.managerChoice == "Add New Product"){
-            addNewProduct();
+            proptNewProduct();
         }else{
             connection.end();
         }
@@ -61,42 +60,86 @@ function promptInventory(){
     });
 }
 
+function proptNewProduct(){
+    inquirer
+    .prompt([{
+    name: "product",
+    type: "input",
+    message: "What is the name of the product you would like to add?",
+  },
+  {
+      name: "department",
+      type: "rawlist",
+      message: "Which department does this item belong to?",
+      choices: ["electronics", "home", "toys","health","clothing"]   
+  },{
+      name: "cost",
+      type: "input",
+      message: "how much does it cost?"
+  },
+  {
+    name: "quantity",
+    type: "input",
+    message: "how many do we have?"
+   
+}]).then (function(info){
+    addNewProduct(info.product,info.department,info.cost,info.quantity);
+    });
+}
 
 function viewProducts(){
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
-        console.log(res);
-        
         displayTable(res);
+        promptManager();
     });
 }
 
 function lowInventory(){
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, res) {
         if (err) throw err;
-        console.log(res);
         displayTable(res);
+        promptManager();
     });
 }
 function addInventory(id, quan){
+    var quantity = 0;
+    connection.query("SELECT stock_quantity FROM products WHERE id="+id, function(err, res) {
+        if (err) throw err;
+       quantity = stock_quantity + quan;
+       console.log(quantity);
+    });
     connection.query(
         "UPDATE products SET ? WHERE ?",
         [
           {
-              stock_quantity: quan
+              stock_quantity: quantity
           },
           {
             id: id
           }
         ], function(err, res) {
         if (err) throw err;
-
          console.log("updated the quantity");
+         promptManager();
     });
 }
 
-function addNewProduct(){
-
+function addNewProduct(pro,dep,cost,quan){
+    var query = connection.query(
+        "INSERT INTO products SET ?",
+        {
+          product_name: pro,
+          department_name: dep,
+          price: cost,
+          stock_quantity: quan
+        },
+        function(err, res) {
+            if (err) throw err;
+            console.log("Added new product");
+            promptManager();
+        }
+    );
 }
 
 function displayTable(res){
