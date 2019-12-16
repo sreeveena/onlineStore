@@ -11,6 +11,6 @@ CREATE TABLE departments (
   PRIMARY KEY (department_id)
 );
 
-INSERT INTO departments (department_name, over_head_costs, product_sales) VALUES
+INSERT INTO departments (department_name, over_head_costs) VALUES
 ("electronics", 100 ),("home", 60), 
 ("toys", 30), ("health", 50),("clothing", 20);

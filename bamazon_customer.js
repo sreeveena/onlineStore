@@ -41,7 +41,7 @@ function promptCustomer(){
             if(id.quantity.toUpperCase() == "Q" || id.product.toUpperCase() == "Q"){
                 connection.end();
             }else{
-                var query = "SELECT id, stock_quantity FROM products WHERE id ="+ id.product;
+                var query = "SELECT id, stock_quantity, product_sales FROM products WHERE id ="+ id.product;
                 connection.query(query, function(err, res) {
                 if (err) throw err;
                 if(id.quantity > res[0].stock_quantity){
@@ -51,9 +51,10 @@ function promptCustomer(){
                     });
                 }else{
                     res[0].stock_quantity -= id.quantity;
+                    res[0].product_sales += parseInt(id.quantity);
                     // updateProductsSales(id.quantity, id.product);
                     var id1 = parseInt(id.product);
-                    updateProduct(res[0].stock_quantity,id.quantity,id1);
+                    updateProduct(res[0].stock_quantity,res[0].product_sales,id1);
                 }
             });
         }   
@@ -81,25 +82,6 @@ function updateProduct(q,ps,id) {
       }
     );
 }
-// function updateProductsSales(q,id){
-//     var query = connection.query(
-//         "UPDATE products SET ? WHERE ?",
-//         [
-//           {
-//             product_sales: q
-//           },
-//           {
-//             id: id
-//           }
-//         ],
-//         function(err, res) {
-//          if(err) throw err;
-//           displayItems(function(returnValue){
-//               displayTable(returnValue);
-//           });
-//         }
-//     );
-// }
 // this function will display the items in the cli-table.
 function displayTable(res){
     table = new Table({

@@ -25,7 +25,7 @@ function promptSupervisor(){
         choices: ['View Product Sales by Department','Create New Department','Quit']
     }]).then (function(id){
         if(id.product == "View Product Sales by Department"){
-            
+
         }
     });
 }
@@ -37,6 +37,15 @@ connection.query("SELECT id,product_name, product_sales, products.department_nam
         promptSupervisor();
     });
 }
+function sumOfSales(){
+    connection.query("SELECT sum(product_sales), department_name FROM products GROUP BY department_name", 
+    function(err, res){
+    if (err) throw err;
+        console.log(res);
+    });
+
+}
+
 function displayTable1(res){
     table = new Table({
         head: ['item_id', 'product_name','product_sales', 'department_name', 'price','stock_quantity'],
