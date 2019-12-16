@@ -1,12 +1,8 @@
 var inquirer = require('inquirer');
 var Table = require('cli-table');
 var mysql = require("mysql");
-
-var table = new Table({
-    head: ['ID', 'product_name','department_name', 'price', 'stock_quantity'],
-    colWidths: [6, 40, 25, 15, 20],
-    border: ['black']
-});
+var table;
+ 
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -20,7 +16,7 @@ connection.connect(function(err) {
     console.log("connected as id " + connection.threadId + "\n");
     promptManager();
   });
-
+//Prompts the manager  
 function promptManager(){
     inquirer
     .prompt([{
@@ -36,7 +32,7 @@ function promptManager(){
         }else if(info.managerChoice == "Add to Inventory"){
             promptInventory();
         }else if(info.managerChoice == "Add New Product"){
-            proptNewProduct();
+            promptNewProduct();
         }else{
             connection.end();
         }
@@ -59,8 +55,8 @@ function promptInventory(){
     addInventory(info.product,info.quantity);
     });
 }
-
-function proptNewProduct(){
+//function will prompt the manager about new product and calls addNewProduct function.
+function promptNewProduct(){
     inquirer
     .prompt([{
     name: "product",
@@ -86,7 +82,7 @@ function proptNewProduct(){
     addNewProduct(info.product,info.department,info.cost,info.quantity);
     });
 }
-
+// displays all the columns from  products table
 function viewProducts(){
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
@@ -94,7 +90,7 @@ function viewProducts(){
         promptManager();
     });
 }
-
+// displays all the columns from products whose quantity is less then 5 
 function lowInventory(){
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, res) {
         if (err) throw err;
@@ -102,13 +98,12 @@ function lowInventory(){
         promptManager();
     });
 }
+//
 function addInventory(id, quan){
     var quantity = 0;
     connection.query("SELECT stock_quantity FROM products WHERE id="+id, function(err, res) {
-        if (err) throw err;
-       quantity = stock_quantity + quan;
-       console.log(quantity);
-    });
+        if (err) throw err;// to do condition check
+       quantity = res[0].stock_quantity + parseInt(quan);
     connection.query(
         "UPDATE products SET ? WHERE ?",
         [
@@ -123,8 +118,9 @@ function addInventory(id, quan){
          console.log("updated the quantity");
          promptManager();
     });
+});
 }
-
+//adds a new product tot he products table.
 function addNewProduct(pro,dep,cost,quan){
     var query = connection.query(
         "INSERT INTO products SET ?",
@@ -143,6 +139,11 @@ function addNewProduct(pro,dep,cost,quan){
 }
 
 function displayTable(res){
+    table = new Table({
+        head: ['ID', 'product_name','department_name', 'price', 'stock_quantity'],
+        colWidths: [6, 40, 25, 15, 20],
+        border: ['black']
+    });
     for( var i = 0; i < res.length; i++){
         table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
     }

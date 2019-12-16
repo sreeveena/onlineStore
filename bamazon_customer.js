@@ -14,7 +14,6 @@ var connection = mysql.createConnection({
   password: "password",
   database: "bamazonDB"
 });
-
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
@@ -22,7 +21,7 @@ connection.connect(function(err) {
         displayTable(returnValue);
     });
 });
-
+//display all the items in products table
 function displayItems(cb){
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
@@ -30,7 +29,7 @@ function displayItems(cb){
         promptCustomer();
       });
 }
-
+//prompts the customer 
 function promptCustomer(){
     inquirer
     .prompt([{
@@ -58,12 +57,12 @@ function promptCustomer(){
                     res[0].stock_quantity -= id.quantity;
                     var id1 = parseInt(id.product);
                     updateProduct(res[0].stock_quantity,id1);
-                    
                 }
             });
         }   
     });
 }
+//updated the stock_quantity related to the id in products table
 function updateProduct(q,id) {
     var query = connection.query(
       "UPDATE products SET ? WHERE ?",
@@ -83,6 +82,7 @@ function updateProduct(q,id) {
       }
     );
 }
+// this function will display the items in the cli-table.
 function displayTable(res){
     for( var i = 0; i < res.length; i++){
         table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);

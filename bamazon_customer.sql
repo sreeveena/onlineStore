@@ -18,4 +18,6 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
 ("5 piece Queen size bedding", "home", 49.99, 2), ("Corelle dinnerware", "home", 89.99, 3),
 ("STEM Snap circuits", "toys", 19.99, 8), ("foot massager", "health", 86.67, 6),
 ("Winter Thermal Gloves", "clothing", 16.99, 9), ("Dancing water speakers", "electronics", 27.99, 5),
-("Ring video doorbell", "electronics", 139, 5), ("stainless steel metal straws", "home", 7.99, 12)
+("Ring video doorbell", "electronics", 139, 5), ("stainless steel metal straws", "home", 7.99, 12);
+
+SELECT * FROM products;
