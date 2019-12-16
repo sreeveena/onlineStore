@@ -98,27 +98,32 @@ function lowInventory(){
         promptManager();
     });
 }
-//
+//adds the  quantity entered by manager to the existing quantity.
 function addInventory(id, quan){
     var quantity = 0;
     connection.query("SELECT stock_quantity FROM products WHERE id="+id, function(err, res) {
-        if (err) throw err;// to do condition check
-       quantity = res[0].stock_quantity + parseInt(quan);
-    connection.query(
-        "UPDATE products SET ? WHERE ?",
-        [
-          {
-              stock_quantity: quantity
-          },
-          {
-            id: id
-          }
-        ], function(err, res) {
         if (err) throw err;
-         console.log("updated the quantity");
-         promptManager();
+        if(res.length == 0){
+            console.log("Please enter a valid product id.");
+            promptManager();
+        }else{
+            quantity = res[0].stock_quantity + parseInt(quan);
+            connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+            {
+                stock_quantity: quantity
+            },
+            {
+                id: id
+            }
+            ], function(err, res) {
+            if (err) throw err;
+            console.log("updated the quantity");
+            promptManager();
+            });
+        }
     });
-});
 }
 //adds a new product tot he products table.
 function addNewProduct(pro,dep,cost,quan){
