@@ -2,36 +2,62 @@ var inquirer = require('inquirer');
 var Table = require('cli-table');
 var mysql = require("mysql");
 
-var table = new Table({
-    head: ['ID', 'product_name','department_name', 'price', 'stock_quantity'],
-    colWidths: [6, 40, 25, 15, 20],
-    border: ['black']
-});
+var table;
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
     password: "password",
-    database: "bamazonSuperDB"
-  });
-  connection.connect(function(err) {
-      if (err) throw err;
-      console.log("connected as id " + connection.threadId + "\n");
-      promptSupervisor();
+    database: "bamazonDB"
+});
+connection.connect(function(err) {
+    if (err) throw err;
+    console.log("connected as id " + connection.threadId + "\n");
+    viewProducts();
+});
+
+function promptSupervisor(){
+    inquirer
+    .prompt([{
+        name: "product",
+        type: "rawlist",
+        message: "What would you like to do?",
+        choices: ['View Product Sales by Department','Create New Department','Quit']
+    }]).then (function(id){
+        if(id.product == "View Product Sales by Department"){
+            
+        }
     });
-
-    function promptCustomer(){
-        inquirer
-        .prompt([{
-          name: "product",
-          type: "input",
-          message: "What is the ID of the item you would like to purchase (Quit with Q)?"
-        },
-        {
-            name: "quantity",
-            type: "input",
-            message: "How many would you like (Quit with Q)?"   
-        }]).then (function(id){
-
-        });
+}
+function viewProducts(){
+connection.query("SELECT id,product_name, product_sales, products.department_name, price, stock_quantity FROM products,departments WHERE products.department_name = departments.department_name", 
+    function(err, res){
+    if (err) throw err;
+        displayTable1(res);
+        promptSupervisor();
+    });
+}
+function displayTable1(res){
+    table = new Table({
+        head: ['item_id', 'product_name','product_sales', 'department_name', 'price','stock_quantity'],
+        colWidths: [6, 45, 15, 25, 10, 15],
+        border: ['black']
+    });
+    for( var i = 0; i < res.length; i++){
+        table.push([res[i].id, res[i].product_name,res[i].product_sales,res[i].department_name,res[i].price,res[i].stock_quantity]);
     }
+    
+    console.log(table.toString());
+}
+function displayTable2(res){
+    table = new Table({
+        head: ['department_id', 'department_name','over_head_cost', 'product_sales', 'total_profit'],
+        colWidths: [6, 40, 25, 15, 10],
+        border: ['black']
+    });
+    for( var i = 0; i < res.length; i++){
+        table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
+    }
+    
+    console.log(table.toString());
+}
