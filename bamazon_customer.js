@@ -30,12 +30,8 @@ connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
     displayItems(function(returnValue){
-        table.push(
-            // displayItems()
-            returnValue
-        );
+        displayTable(returnValue);
     });
-    console.log(table.toString());
 });
 
 function displayItems(cb){
@@ -61,21 +57,12 @@ function promptCustomer(){
         message: "How many would you like?"   
     }]).then (function(id){
         var query = "SELECT id, stock_quantity FROM products WHERE id ="+ id.product;
-        // console.log(query);
-        // console.log(id.quantity);
         connection.query(query, function(err, res) {
             if (err) throw err;
-            // console.log(res);
-            // console.log(res[0].stock_quantity);
-            // console.log(id.quantity);
-
             if(id.quantity > res[0].stock_quantity){
                 console.log("insufficient quantity");
                 displayItems(function(returnValue){
-                    table.push(
-                        // displayItems()
-                        returnValue
-                    );
+                    displayTable(returnValue);
                 });
             }else{
                 res[0].stock_quantity -= id.quantity;
@@ -101,11 +88,15 @@ function updateProduct(q,id) {
       function(err, res) {
         console.log(err);
         displayItems(function(returnValue){
-            table.push(
-                // displayItems()
-                returnValue
-            );
+            displayTable(returnValue);
         });
       }
     );
+}
+function displayTable(res){
+    for( var i = 0; i < res.length; i++){
+        table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
+    }
+    
+    console.log(table.toString());
 }
