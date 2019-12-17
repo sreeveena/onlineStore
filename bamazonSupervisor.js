@@ -27,6 +27,12 @@ function promptSupervisor(){
         if(id.product == "View Product Sales by Department"){
             viewdepartments();
         }
+        // }else if(id.product == "Create New Department"){
+        //     promptDepart();
+        // }
+        else{
+            connection.end();
+        }
     });
 }
 function viewProducts(){
@@ -38,10 +44,10 @@ connection.query("SELECT id,product_name, product_sales, products.department_nam
     });
 }
 function viewdepartments(){
-    connection.query("select department_id, departments.department_name, p.product_sales, (p.product_sales - departments.over_head_costs) as total_profit from departments, (select department_name, sum(product_sales) as product_sales from products group by department_name) as p where p.department_name = departments.department_name"
+    connection.query("select department_id, departments.department_name, over_head_cost, p.product_sales, (p.product_sales - departments.over_head_costs) as total_profit from departments, (select department_name, sum(product_sales) as product_sales from products group by department_name) as p where p.department_name = departments.department_name"
     , function(err, res){
         if (err) throw err;
-            displayTable1(res);
+            displayTable2(res);
             promptSupervisor();
     });
 }
