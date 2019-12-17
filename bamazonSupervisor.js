@@ -25,7 +25,7 @@ function promptSupervisor(){
         choices: ['View Product Sales by Department','Create New Department','Quit']
     }]).then (function(id){
         if(id.product == "View Product Sales by Department"){
-
+            viewdepartments();
         }
     });
 }
@@ -37,13 +37,20 @@ connection.query("SELECT id,product_name, product_sales, products.department_nam
         promptSupervisor();
     });
 }
+function viewdepartments(){
+    connection.query("select department_id, departments.department_name, p.product_sales, (p.product_sales - departments.over_head_costs) as total_profit from departments, (select department_name, sum(product_sales) as product_sales from products group by department_name) as p where p.department_name = departments.department_name"
+    , function(err, res){
+        if (err) throw err;
+            displayTable1(res);
+            promptSupervisor();
+    });
+}
 function sumOfSales(){
     connection.query("SELECT sum(product_sales), department_name FROM products GROUP BY department_name", 
     function(err, res){
     if (err) throw err;
-        console.log(res);
+        // console.log(res);
     });
-
 }
 
 function displayTable1(res){
@@ -65,7 +72,7 @@ function displayTable2(res){
         border: ['black']
     });
     for( var i = 0; i < res.length; i++){
-        table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
+        table.push([res[i].department_id, res[i].department_name,res[i].over_head_cost,res[i].product_sales,res[i].total_profit]);
     }
     
     console.log(table.toString());
