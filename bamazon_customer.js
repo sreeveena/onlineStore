@@ -76,6 +76,7 @@ function updateProduct(q,ps,id) {
       ],
       function(err, res) {
        if(err) throw err;
+       
         displayItems(function(returnValue){
             displayTable(returnValue);
         });
