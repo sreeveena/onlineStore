@@ -44,7 +44,7 @@ connection.query("SELECT id,product_name, product_sales, products.department_nam
     });
 }
 function viewdepartments(){
-    connection.query("select department_id, departments.department_name, over_head_cost, p.product_sales, (p.product_sales - departments.over_head_costs) as total_profit from departments, (select department_name, sum(product_sales) as product_sales from products group by department_name) as p where p.department_name = departments.department_name"
+    connection.query("select department_id, departments.department_name,departments.over_head_costs, p.product_sales, (p.product_sales - departments.over_head_costs) as total_profit from departments, (select department_name, sum(product_sales) as product_sales from products group by department_name) as p where p.department_name = departments.department_name"
     , function(err, res){
         if (err) throw err;
             displayTable2(res);
@@ -73,13 +73,13 @@ function displayTable1(res){
 }
 function displayTable2(res){
     table = new Table({
-        head: ['department_id', 'department_name','over_head_cost', 'product_sales', 'total_profit'],
+        head: ['department_id', 'department_name','over_head_costs','product_sales', 'total_profit'],
         colWidths: [6, 40, 25, 15, 10],
         border: ['black']
     });
     for( var i = 0; i < res.length; i++){
-        table.push([res[i].department_id, res[i].department_name,res[i].over_head_cost,res[i].product_sales,res[i].total_profit]);
+        table.push([res[i].department_id, res[i].department_name,res[i].over_head_costs,res[i].product_sales,res[i].total_profit]);
     }
-    
+
     console.log(table.toString());
 }
