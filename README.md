@@ -32,10 +32,28 @@ It will prompt the manager for the following options:
 2. View Low Inventory
 3. Add to Inventory
 4. Add New Product
+5. Quit
 If a manager selects `View Products for Sale`, the app will list every available item: the item IDs, names, prices, and quantities.
 If a manager selects `View Low Inventory`, then it will list all items with an inventory count lower than five.
 If a manager selects `Add to Inventory`, then app will display a prompt that will let the manager "add more" of any item currently in the store.
 If a manager selects `Add New Product`, it will allow the manager to add a completely new product to the store.
+If a manager selects `Quit`, it will quit from the application.
 
 For Supervisor: 
+It will prompt the manager for the following options:
+1. View Product Sales by Department
+2. Create New Department
+3. Quit
 
+If a manager selects `View Product Sales by Department`, the app will display the following columns in a cli-table: 
+1. department_id : auto increment number
+2. department_name: names of all the departents in the app
+3. over_head_costs: A dummy number you set for each department
+4. product_sales: a product of  price of the product to the quantity of the product purchased
+5. total_profit:  the difference between over_head_costs and product_sales
+If a manager selects ` Create New Department`, then it will list all items with an inventory count lower than five.
+prompts the supervisor for new department and followed by the over_head_cost.
+If a manager selects `Quit`, it will quit from the application.
+![gif]()
+![gif]()
+![gif]()
