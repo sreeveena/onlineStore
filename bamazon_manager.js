@@ -50,7 +50,7 @@ function promptInventory(){
         message: "What is the ID of the item you would like to add?"
     }]).then (function(info){
         if(!isNaN(info.product)){
-            promptQuantity(info);
+            promptQuantity(info.product);
         }else{
             console.log("please enter a valid input");
             promptInventory();
