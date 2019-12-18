@@ -26,13 +26,26 @@ function promptSupervisor(){
     }]).then (function(id){
         if(id.product == "View Product Sales by Department"){
             viewdepartments();
-        }
-        // }else if(id.product == "Create New Department"){
-        //     promptDepart();
-        // }
-        else{
+        }else if(id.product == "Create New Department"){
+            promptDepart();
+        }else{
             connection.end();
         }
+    });
+}
+function promptDepart(){
+    inquirer
+    .prompt([{
+        name: "department",
+        type: "input",
+        message: "What is the name of the department?"
+    },{
+        name: "overHead",
+        type: "input",
+        message: "What is the over head cost of the department?" 
+    } 
+    ]).then (function(id){
+        addDep(id.department, id.overHead); 
     });
 }
 function viewProducts(){
@@ -50,6 +63,19 @@ function viewdepartments(){
             displayTable2(res);
             promptSupervisor();
     });
+}
+function addDep(dep,overH){
+    var query = connection.query("INSERT INTO departments SET ?",
+          {
+            department_name: dep,
+            over_head_costs: overH
+          },
+        function(err, res) {
+          console.log( " New Department added!\n");
+          promptSupervisor();
+        }
+    );
+    
 }
 function sumOfSales(){
     connection.query("SELECT sum(product_sales), department_name FROM products GROUP BY department_name", 
@@ -74,7 +100,7 @@ function displayTable1(res){
 function displayTable2(res){
     table = new Table({
         head: ['department_id', 'department_name','over_head_costs','product_sales', 'total_profit'],
-        colWidths: [6, 40, 25, 15, 10],
+        colWidths: [10, 30, 25, 15, 15],
         border: ['black']
     });
     for( var i = 0; i < res.length; i++){
