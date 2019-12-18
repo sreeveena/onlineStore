@@ -45,16 +45,32 @@ function promptManager(){
 function promptInventory(){
     inquirer
     .prompt([{
-    name: "product",
-    type: "input",
-    message: "What is the ID of the item you would like to add?"
-  },
-  {
-      name: "quantity",
-      type: "input",
-      message: "How many would you like to add?"   
-  }]).then (function(info){
-    addInventory(info.product,info.quantity);
+        name: "product",
+        type: "input",
+        message: "What is the ID of the item you would like to add?"
+    }]).then (function(info){
+        if(!isNaN(info.product)){
+            promptQuantity(info);
+        }else{
+            console.log("please enter a valid input");
+            promptInventory();
+        }
+    });
+}
+function promptQuantity(product){
+    inquirer
+    .prompt([{
+        name: "quantity",
+        type: "input",
+        message: "How many would you like to add?"   
+    }]).then (function(info){
+        if(!isNaN(info.quantity)){
+            addInventory(product,info.quantity);
+        }else{
+            console.log("please enter a valid input");
+            promptQuantity(product);
+        }
+        
     });
 }
 //function will prompt the manager about new product and calls addNewProduct function.
