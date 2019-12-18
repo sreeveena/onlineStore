@@ -70,7 +70,7 @@ function promptCustomer(){
                         // updateProductsSales(id.quantity, id.product);
                         var id1 = parseInt(product);
 
-                        updateProduct(res[0].stock_quantity,(res[0].product_sales*res[0].price),id1);
+                        updateProduct(res[0].stock_quantity,(res[0].product_sales*res[0].price),id1,id.quantity);
                     }
                 }else{
                     console.log("please enter a valid input");
@@ -81,7 +81,7 @@ function promptCustomer(){
     });
 }
 //updated the stock_quantity related to the id in products table
-function updateProduct(q,ps,id) {
+function updateProduct(q,ps,id,purchasedQuantity) {
     var query = connection.query(
       "UPDATE products SET ?,? WHERE ?",
       [
@@ -96,7 +96,15 @@ function updateProduct(q,ps,id) {
       ],
       function(err, res) {
        if(err) throw err;
-
+        
+        var cliTableProductEntry = table.find( function(entry) {
+            if(entry[0] == id) {
+                return true;
+            }
+            return false;
+        });
+        console.log("Sucessfully purchased " + purchasedQuantity + " " + cliTableProductEntry[1]+"'s");
+        
         displayItems(function(returnValue){
             displayTable(returnValue);
         });
