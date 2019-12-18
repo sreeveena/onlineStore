@@ -1,8 +1,9 @@
 var inquirer = require('inquirer');
 var Table = require('cli-table');
 var mysql = require("mysql");
-
+var maxProduct = 0;
 var table ;
+
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -32,30 +33,48 @@ function promptCustomer(){
       name: "product",
       type: "input",
       message: "What is the ID of the item you would like to purchase (Quit with Q)?"
-    },
-    {
+    }]).then (function(id){
+        if(id.product.toUpperCase() == "Q"){
+            connection.end(); 
+        }else{
+            if(parseInt(id.product) <= maxProduct){
+                promptQuantity(id.product);
+            }else{
+                console.log("please enter a valid input");
+                promptCustomer();
+            }
+            
+        }
+    });
+}
+    function promptQuantity(product){
+        inquirer
+        .prompt([{
         name: "quantity",
         type: "input",
         message: "How many would you like (Quit with Q)?"   
     }]).then (function(id){
-            if(id.quantity.toUpperCase() == "Q" || id.product.toUpperCase() == "Q"){
+            if(id.quantity.toUpperCase() == "Q"){
                 connection.end();
             }else{
-                var query = "SELECT id, stock_quantity, product_sales,price FROM products WHERE id ="+ id.product;
+                var query = "SELECT id, stock_quantity, product_sales,price FROM products WHERE id ="+ product;
                 connection.query(query, function(err, res) {
                 if (err) throw err;
-                if(id.quantity > res[0].stock_quantity){
-                    console.log("insufficient quantity");
-                    displayItems(function(returnValue){
-                        displayTable(returnValue);
-                    });
-                }else{
-                    res[0].stock_quantity -= id.quantity;
-                    res[0].product_sales += parseInt(id.quantity);
-                    // updateProductsSales(id.quantity, id.product);
-                    var id1 = parseInt(id.product);
+                if(!isNaN(id.quantity)){                
+                    if(id.quantity > res[0].stock_quantity){
+                        console.log("insufficient quantity");
+                        promptQuantity(product);
+                    }else{
+                        res[0].stock_quantity -= id.quantity;
+                        res[0].product_sales += parseInt(id.quantity);
+                        // updateProductsSales(id.quantity, id.product);
+                        var id1 = parseInt(product);
 
-                    updateProduct(res[0].stock_quantity,(res[0].product_sales*res[0].price),id1);
+                        updateProduct(res[0].stock_quantity,(res[0].product_sales*res[0].price),id1);
+                    }
+                }else{
+                    console.log("please enter a valid input");
+                    promptQuantity(product);
                 }
             });
         }   
@@ -94,6 +113,6 @@ function displayTable(res){
     for( var i = 0; i < res.length; i++){
         table.push([res[i].id, res[i].product_name,res[i].department_name,res[i].price,res[i].stock_quantity]);
     }
-    
+    maxProduct = i;
     console.log(table.toString());
 }
