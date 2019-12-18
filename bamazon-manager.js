@@ -22,7 +22,7 @@ function promptManager(){
     .prompt([{
       type: "rawlist",
       message: "What would you like to do?",
-      choices: ["View Products for Sale","View Low Inventory","Add to Inventory","Add New Product","Quit"],
+      choices: ["View Products for Sale","View Low Inventory","Add to Inventory","Add New Product","Show Departments","Quit"],
       name: "managerChoice"
     }]).then (function(info){
         if(info.managerChoice == "View Products for Sale"){
@@ -33,6 +33,8 @@ function promptManager(){
             promptInventory();
         }else if(info.managerChoice == "Add New Product"){
             promptNewProduct();
+        }else if(info.managerChoice == "Show Departments"){
+           showDepartments();
         }else{
             connection.end();
         }
@@ -57,29 +59,38 @@ function promptInventory(){
 }
 //function will prompt the manager about new product and calls addNewProduct function.
 function promptNewProduct(){
-    inquirer
-    .prompt([{
-    name: "product",
-    type: "input",
-    message: "What is the name of the product you would like to add?",
-  },
-  {
-      name: "department",
-      type: "rawlist",
-      message: "Which department does this item belong to?",
-      choices: ["electronics", "home", "toys","health","clothing"]   
-  },{
-      name: "cost",
-      type: "input",
-      message: "how much does it cost?"
-  },
-  {
-    name: "quantity",
-    type: "input",
-    message: "how many do we have?"
-   
-}]).then (function(info){
-    addNewProduct(info.product,info.department,info.cost,info.quantity);
+    connection.query("SELECT department_name FROM departments", function(err, res) {
+        if (err) throw err;
+        var depts = [];
+        for(var i = 0; i < res.length; i++){
+           depts[i] = res[i].department_name;
+        }
+            inquirer
+            .prompt([{
+            name: "product",
+            type: "input",
+            message: "What is the name of the product you would like to add?",
+        },
+        {
+            name: "department",
+            type: "rawlist",
+            message: "Which department does this item belong to?",
+            choices: depts  
+        },{
+            name: "cost",
+            type: "input",
+            message: "how much does it cost?"
+        },
+        {
+            name: "quantity",
+            type: "input",
+            message: "how many do we have?"
+        
+        }]).then (function(info){
+            addNewProduct(info.product,info.department,info.cost,info.quantity);
+            });
+        
+        
     });
 }
 // displays all the columns from  products table
@@ -142,7 +153,12 @@ function addNewProduct(pro,dep,cost,quan){
         }
     );
 }
-
+function showDepartments(){
+    connection.query("SELECT department_name FROM departments", function(err, res) {
+        if (err) throw err;
+        displayTable1(res);
+    });
+}
 function displayTable(res){
     table = new Table({
         head: ['ID', 'product_name','department_name', 'price', 'stock_quantity'],
@@ -154,4 +170,17 @@ function displayTable(res){
     }
     
     console.log(table.toString());
+}
+function displayTable1(res){
+    table = new Table({
+        head: ['department_name',],
+        colWidths: [ 40],
+        border: ['black']
+    });
+    for( var i = 0; i < res.length; i++){
+        table.push([res[i].department_name]);
+    }
+    
+    console.log(table.toString());
+    promptManager();
 }
