@@ -22,3 +22,4 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
 ("Ring video doorbell", "electronics", 139.00, 5), ("stainless steel metal straws", "home", 7.99, 12);
 
 select * from products;
+update products set stock_quantity = 10 where id = 2;

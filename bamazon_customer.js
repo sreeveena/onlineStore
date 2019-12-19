@@ -69,8 +69,8 @@ function promptCustomer(){
                         res[0].product_sales += parseInt(id.quantity);
                         // updateProductsSales(id.quantity, id.product);
                         var id1 = parseInt(product);
-
-                        updateProduct(res[0].stock_quantity,(res[0].product_sales*res[0].price),id1,id.quantity);
+                        var sales = res[0].product_sales + parseFloat(id.quantity)*res[0].price;
+                        updateProduct(res[0].stock_quantity,sales,id1,id.quantity);
                     }
                 }else{
                     console.log("please enter a valid input");
