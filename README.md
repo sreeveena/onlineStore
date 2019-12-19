@@ -54,6 +54,6 @@ If a manager selects `View Product Sales by Department`, the app will display th
 If a manager selects ` Create New Department`, then it will list all items with an inventory count lower than five.
 prompts the supervisor for new department and followed by the over_head_cost.
 If a manager selects `Quit`, it will quit from the application.
-![gif]()
+![gif](./Bamazon_Customer.gif)
 ![gif]()
 ![gif]()
