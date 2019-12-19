@@ -55,5 +55,6 @@ If a manager selects ` Create New Department`, then it will list all items with 
 prompts the supervisor for new department and followed by the over_head_cost.
 If a manager selects `Quit`, it will quit from the application.
 ![gif](./Bamazon_Customer.gif)
-![gif]()
-![gif]()
+![gif](./Bamazon_Manager.gif)
+![gif](./Bamazon_Supervisor.gif)
+![gif](./Bamazon_Department.gif)
