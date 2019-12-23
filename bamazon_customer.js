@@ -3,7 +3,7 @@ var Table = require('cli-table');
 var mysql = require("mysql");
 var maxProduct = 0;
 var table ;
-
+var currentSales = 0;
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -69,6 +69,7 @@ function promptCustomer(){
                         res[0].product_sales += parseInt(id.quantity);
                         // updateProductsSales(id.quantity, id.product);
                         var id1 = parseInt(product);
+                        currentSales = parseFloat(id.quantity)*res[0].price;
                         var sales = res[0].product_sales + parseFloat(id.quantity)*res[0].price;
                         updateProduct(res[0].stock_quantity,sales,id1,id.quantity);
                     }
@@ -103,7 +104,7 @@ function updateProduct(q,ps,id,purchasedQuantity) {
             }
             return false;
         });
-        console.log("Sucessfully purchased " + purchasedQuantity + " " + cliTableProductEntry[1]+"'s");
+        console.log("Total amount for " + purchasedQuantity + " " + cliTableProductEntry[1]+"'s "+"is $ "+currentSales);
         
         displayItems(function(returnValue){
             displayTable(returnValue);
